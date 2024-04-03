@@ -74,9 +74,9 @@ def get_user_settings():
                 'REWARD_MULTIPLIER_BOSS': float(row['REWARD_MULTIPLIER_BOSS']),'REWARD_MULTIPLIER_WORKER': float(row['REWARD_MULTIPLIER_WORKER']),
                 'REWARD_MULTIPLIER_MANAGER': float(row['REWARD_MULTIPLIER_MANAGER']),'BOSS_CANDLE_MUL': float(row['BOSS_CANDLE_MUL']),
                 'MANAGER_CANDLE_MUL': float(row['MANAGER_CANDLE_MUL']),'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),'CounterDecision': float(row['CounterDecision']),
-                'NumBerOfCounterTrade': float(row['NumBerOfCounterTrade']),'USE_PARTIAL_PROFIT': float(row['USE_PARTIAL_PROFIT']),
-                'PartialProfitPercentage_qty_size': float(row['PartialProfitPercentage_qty_size']),'USE_CANDLE_CLOSING': float(row['USE_CANDLE_CLOSING']),
-                'CANDLE_CLOSEING_PERCENTAGE': float(row['CANDLE_CLOSEING_PERCENTAGE']),'USE_TSL': float(row['TSL_POINTS']),
+                'NumBerOfCounterTrade': float(row['NumBerOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
+                'PartialProfitPercentage_qty_size': float(row['PartialProfitPercentage_qty_size']),'USE_CLOSING_CRITERIA': (row['USE_CLOSING_CRITERIA']),
+                'ClosePercentage': float(row['ClosePercentage']),'USE_TSL': (row['TSL_POINTS']),
                 "StartTime": row['StartTime'],"StopTime": row['StopTime'],"open_value" : None,"high_value" :None,"low_value" : None,
                 "close_value" :None,"volume_value": None,"NotTradingReason":None,"Rangeeee":None,"value_boss":None,
                 "value_manager": None,"value_worker": None,"StoplossValue": None,"TargetValue": None,'candle_type':None,
@@ -386,6 +386,39 @@ def main_strategy():
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
+
+                    if params["USE_CLOSING_CRITERIA"]==True:
+                        if (close_value > open_value):
+                            candlerange = high_value-low_value
+                            perapproved = candlerange * params["ClosePercentage"] * 0.01
+                            closedist = abs(close_value-low_value)
+                            if closedist<perapproved:
+                                params["TradingEnabled"] = False
+                                params[
+                                    "NotTradingReason"] = f"Close dist from low : {closedist} is not 80 % f candle range: {candlerange}, 80% value : {perapproved}"
+
+                                orderlog = f"{params['Symbol']} Reason for not trading :{params['NotTradingReason']} "
+                                print(orderlog)
+                                write_to_order_logs(orderlog)
+
+
+                        if (close_value < open_value):
+                            candlerange = high_value - low_value
+                            perapproved = candlerange * params["ClosePercentage"] * 0.01
+                            closedist = abs(high_value - close_value)
+                            if closedist < perapproved:
+                                params["TradingEnabled"] = False
+                                params[
+                                    "NotTradingReason"] = f"Close dist from low : {closedist} is not 80 % f candle range: {candlerange}, 80% value : {perapproved}"
+
+                                orderlog = f"{params['Symbol']} Reason for not trading :{params['NotTradingReason']} "
+                                print(orderlog)
+                                write_to_order_logs(orderlog)
+
+                if params["TradingEnabled"] == True and start_time <=current_time <= end_time:
+                    pass
+                    # buy con
+                    # sell con
 
     except Exception as e:
         print("Error happened in Main strategy loop: ", str(e))

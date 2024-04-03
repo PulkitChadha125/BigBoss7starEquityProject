@@ -136,7 +136,41 @@ def main_strategy():
                     params["value_boss"]=float(params["AverageValue"])*float(params["BOSS_CANDLE_MUL"])
                     params["value_manager"]=float(params["AverageValue"])*float(params["MANAGER_CANDLE_MUL"])
                     params["value_worker"]=float(params["AverageValue"])*float(params["WORKER_CANDLE_MUL"])
-                    # "buygap":None,"sellgap":None,
+                    # "buygap":None,"sellgap":None, "buyday":None,'sellday':None,
+                    if  params['USE_PREVIOUSDAY_HIGH_LOW'] == True:
+                        if params["high_value"] >= params["high"]:
+                            params["buyday"]= True
+                            orderlog = f"{timestamp} High is greater than high of previous day   {symbol}"
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if params["high_value"] < params["high"]:
+                            params["buyday"]= False
+                            params["NotTradingReason"] = f"{timestamp} High is less than high of previous day   {symbol}"
+                            orderlog = params["NotTradingReason"]
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if params["low_value"] <= params["low"]:
+                            params["sellday"]= True
+                            orderlog = f"{timestamp} low price is below low of previous day {symbol}"
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if params["low_value"] > params["low"]:
+                            params["sellday"]= False
+                            orderlog = f"{timestamp} low price is above low of previous day {symbol}"
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                    else:
+                        params["sellday"] = True
+                        params["buyday"] = True
+                        params["NotTradingReason"] = f"{timestamp} Previous day high and low condition is disabled it will not be checked {symbol}"
+                        orderlog = params["NotTradingReason"]
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
+
 
                     if params['CHECK_GAP_CONDITION'] == True:
                         if params["high_value"] <= params["high"]:
@@ -164,9 +198,8 @@ def main_strategy():
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
-                        params["TradingEnabled"] = True
                         params["sellgap"]= True
-                        params["buygap"]= False
+                        params["buygap"]= True
                         params["NotTradingReason"] = f"{timestamp} Gap condition is disabled it will not be checked {symbol}"
                         orderlog = params["NotTradingReason"]
                         print(orderlog)
@@ -200,7 +233,6 @@ def main_strategy():
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
-                        params["TradingEnabled"] = True
                         params["sellcpr"]= True
                         params["buycrp"]= True
                         params["NotTradingReason"] = f"{timestamp} CPR condition is disabled condition will not be checked {symbol}"
@@ -236,7 +268,6 @@ def main_strategy():
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
-                        params["TradingEnabled"] = True
                         params["45sell"]= True
                         params["45buy"]= True
                         params["NotTradingReason"] = f"{timestamp} 45 min condition is disabled condition will not be checked {symbol}"
@@ -270,7 +301,6 @@ def main_strategy():
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
-                        params["TradingEnabled"] = True
                         params["sell200"]=True
                         params["buy200"] = True
                         params["NotTradingReason"] = f"{timestamp} 200 ma is disabled condition will not be checked {symbol}"
@@ -306,7 +336,7 @@ def main_strategy():
                             write_to_order_logs(orderlog)
 
                     else:
-                        params["TradingEnabled"] = True
+
                         params["sell20"] = True
                         params["buy20"] = True
                         params["NotTradingReason"] = f"{timestamp} 20 ma is disabled condition will not be checked {symbol}"

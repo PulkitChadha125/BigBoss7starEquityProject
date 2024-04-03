@@ -45,7 +45,6 @@ def get_user_settings():
                 if not matching_row.empty:
                     # Get the 'ScripCode' value
                     spcode = matching_row.iloc[0]['ScripCode']
-                    CPR_VALUE = df[df['Symbol'] == symbol]['CPR_VALUE'].values[0]
 
                     data = FivePaisaIntegration.get_historical_data(spcode,'1d')
                     open=float(data['Open'])
@@ -67,10 +66,9 @@ def get_user_settings():
 
                     difference=abs(topcentral-bottomcentral)
 
-                    if difference<=CPR_VALUE:
-                        TradingEnabled= True
-                    else:
-                        TradingEnabled = False
+
+                    TradingEnabled= True
+
 
                 else:
                     print(f"No matching row found for symbol {symbol}")
@@ -78,26 +76,24 @@ def get_user_settings():
                 symbol_dict[symbol] = {
                     "Datetime":Datetime,
                     "ScripCode":spcode,
-                    "CPR_VALUE":CPR_VALUE,
                     "high":high,
                     "low":low,
                     "close":close,
                     "Pivot":pivotpoint,
                     "Bottom Central":bottomcentral,
                     "Top Central":topcentral,
-                    "TradingEnabled":TradingEnabled,
                 }
 
             except Exception as e:
                 print("Error happened in fetching symbol", str(e))
+        print(symbol_dict)
 
     except Exception as e:
         print("Error happened in fetching symbol", str(e))
 
 def savetocsv(symbol_dict):
     df = pd.DataFrame.from_dict(symbol_dict, orient='index')
-    df_filtered = df[df['TradingEnabled']]
-    df_filtered.to_csv('symbol_data.csv', index_label='Symbol')
+    df.to_csv('symbol_data.csv', index_label='Symbol')
 
 
 get_user_settings()

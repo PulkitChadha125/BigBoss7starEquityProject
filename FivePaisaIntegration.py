@@ -1,5 +1,5 @@
 import time
-
+import pandas_ta as ta
 AppName="5P50985207"
 AppSource=22072
 UserID="Xr375mgFMNK"
@@ -98,19 +98,17 @@ def get_historical_data_tradeexecution(token, timeframe):
     from_time = datetime.now() - timedelta(days=4)
     to_time = datetime.now()
     df = client.historical_data('N', 'C', token, timeframe, from_time, to_time)
+    df["MA20"] = ta.ema(close=df["Close"], length=20)
+    df["MA200"] = ta.ema(close=df["Close"], length=200)
     df['Datetime'] = pd.to_datetime(df['Datetime'])
-
-    # Filter last two rows
     last_two_rows = df.iloc[-2:]
-
-    # Filter row matching the desired time
     desired_row = last_two_rows[last_two_rows['Datetime'] == desired_time_str]
 
     if not desired_row.empty:
         desired_row_values = desired_row.iloc[0].to_dict()
         return desired_row_values
     else:
-        return None  # Or handle the case when no row matches the desired time
+        return None
 
 
 
@@ -201,6 +199,8 @@ def orderbook():
 
     global client
     client.get_tradebook()
+
+
 
 
 

@@ -100,6 +100,7 @@ def get_historical_data_tradeexecution(token, timeframe):
     df = client.historical_data('N', 'C', token, timeframe, from_time, to_time)
     df["MA20"] = ta.ema(close=df["Close"], length=20)
     df["MA200"] = ta.ema(close=df["Close"], length=200)
+    df["ATR"] = ta.atr(high=df["High"],low=df["Low"],close=df["Close"], length=14)
     df['Datetime'] = pd.to_datetime(df['Datetime'])
     last_two_rows = df.iloc[-2:]
     desired_row = last_two_rows[last_two_rows['Datetime'] == desired_time_str]

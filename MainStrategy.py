@@ -62,26 +62,28 @@ def get_user_settings():
         # MANAGER_CANDLE_MUL,CounterDecision,NumBerOfCounterTrade,USE_PARTIAL_PROFIT,
         # PartialProfitPercentage_qty_size,
         # PartProfitMultipler,USE_CANDLE_CLOSING,CANDLE_CLOSEING_PERCENTAGE,USE_TSL,TSL_POINTS
+        # USE_CLOSING_CRITERIA_WORKER,USE_CLOSING_CRITERIA_MANAGER,USE_CLOSING_CRITERIA_BOSS,ClosePercentage_WORKER,ClosePercentage_MANAGER,ClosePercentage_BOSS
         for index, row in df.iterrows():
             symbol_dict = {
                 'Symbol': row['Symbol'],'HighFortyFive': int(row['HighFortyFive']),'LowFortyFive':float(row['LowFortyFive']),
                 'AverageValue': float(row['AverageValue']),'ScripCode': float(row['ScripCode']),'high': float(row['high']),
                 'low': float(row['low']),'Pivot': float(row['Pivot']),'Bottom Central': float(row['Bottom Central']),
-                'Top Central': float(row['Top Central']),'Quantity': float(row['Quantity']),'TradingEnabled': row['TradingEnabled'],'TimeFrame': row['TimeFrame'],
+                'Top Central': float(row['Top Central']),'Risk': float(row['Risk']),'TradingEnabled': row['TradingEnabled'],'TimeFrame': row['TimeFrame'],
                 'USE_TWENTY_MA': (row['USE_TWENTY_MA']),'USE_TWO_HUNDRED_MA': (row['USE_TWO_HUNDRED_MA']),'CHECK_GAP_CONDITION': (row['CHECK_GAP_CONDITION']),
                 'USE_CPR': (row['USE_CPR']),'USE_FORTYFIVE': (row['USE_FORTYFIVE']),'USE_PREVIOUSDAY_HIGH_LOW': (row['USE_PREVIOUSDAY_HIGH_LOW']),
                 'USE_BOSS': (row['USE_BOSS']),'USE_MANAGER': (row['USE_MANAGER']),'USE_WORKER': (row['USE_WORKER']),
                 'REWARD_MULTIPLIER_BOSS': float(row['REWARD_MULTIPLIER_BOSS']),'REWARD_MULTIPLIER_WORKER': float(row['REWARD_MULTIPLIER_WORKER']),
-                'REWARD_MULTIPLIER_MANAGER': float(row['REWARD_MULTIPLIER_MANAGER']),'BOSS_CANDLE_MUL': float(row['BOSS_CANDLE_MUL']),
-                'MANAGER_CANDLE_MUL': float(row['MANAGER_CANDLE_MUL']),'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),'CounterDecision': float(row['CounterDecision']),
-                'NumBerOfCounterTrade': float(row['NumBerOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
-                'PartialProfitPercentage_qty_size': float(row['PartialProfitPercentage_qty_size']),'USE_CLOSING_CRITERIA': (row['USE_CLOSING_CRITERIA']),
-                'ClosePercentage': float(row['ClosePercentage']),'USE_TSL': (row['TSL_POINTS']),
+                'MANAGER_CANDLE_MUL_UP': float(row['MANAGER_CANDLE_MUL_UP']),'MANAGER_CANDLE_MUL_DOWN': float(row['MANAGER_CANDLE_MUL_DOWN']),'BOSS_CANDLE_MUL': float(row['BOSS_CANDLE_MUL']),
+                'MANAGER_CANDLE_MUL': float(row['MANAGER_CANDLE_MUL']),'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),
+                'NoOfCounterTrade': float(row['NoOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
+                'PartialProfitPercentage_qty_size': float(row['PartialProfitPercentage_qty_size']),'USE_CLOSING_CRITERIA_BOSS': (row['USE_CLOSING_CRITERIA_BOSS']),
+                'ClosePercentage_BOSS': float(row['ClosePercentage_BOSS']),'USE_TSL': (row['USE_TSL']),
                 "StartTime": row['StartTime'],"StopTime": row['StopTime'],"open_value" : None,"high_value" :None,"low_value" : None,
                 "close_value" :None,"volume_value": None,"NotTradingReason":None,"Rangeeee":None,"value_boss":None,
-                "value_manager": None,"value_worker": None,"StoplossValue": None,"TargetValue": None,'candle_type':None,
+                "value_manager_UP": None,"value_manager_DOWN": None,"value_worker": None,"StoplossValue": None,"TargetValue": None,'candle_type':None,
                 "MA20":None,"MA200":None,"buy200":None,"sell200":None,"buy20":None,"sell20":None,"buycrp":None,"sellcpr":None,"45buy":None,"45sell":None,
-                "buyday":None,'sellday':None,"buygap":None,"sellgap":None,
+                "buyday":None,'sellday':None,"buygap":None,"sellgap":None,"count":None,"InitialTrade":None,"BUY":False,"SHORT":False,"ATR":None,
+                "partialprofitval":None,"Quantity":None,"partial_qty":None,"Remain_qty":None,"bigbosstrade":False,"bigbosstradetype":None,"NextTslLevel":None
             }
             result_dict[row['Symbol']] = symbol_dict
         print("result_dict: ",result_dict)
@@ -123,6 +125,16 @@ def main_strategy():
                     low_value = float(data['Low'])
                     close_value = float(data['Close'])
                     volume_value = float(data['Volume'])
+                    Rangeeee = float(high_value - low_value)
+                    params["Rangeeee"] = float(Rangeeee)
+                    qty = params["Risk"] / Rangeeee
+                    qty = int(qty)
+                    print(f"{symbol} qty : {qty}")
+                    params["partial_qty"]=qty*params["PartialProfitPercentage_qty_size"]*0.01
+                    params["partial_qty"]=abs(qty-params["partial_qty"])
+                    print(f"{symbol} partial qty: {params['partial_qty']}")
+                    params["Remain_qty"]= abs(qty-params["partial_qty"])
+                    params["Quantity"] = qty
                     params["open_value"] = open_value
                     params["high_value"] = high_value
                     params["low_value"] = low_value
@@ -130,11 +142,14 @@ def main_strategy():
                     params["volume_value"] = volume_value
                     params["MA20"] =float(data['MA20'])
                     params["MA200"] =float(data['MA200'])
-                    Rangeeee = float(high_value - low_value)
-                    params["Rangeeee"] = float(Rangeeee)
+                    params["ATR"] = float(data['ATR'])
+
+
 
                     params["value_boss"]=float(params["AverageValue"])*float(params["BOSS_CANDLE_MUL"])
-                    params["value_manager"]=float(params["AverageValue"])*float(params["MANAGER_CANDLE_MUL"])
+
+                    params["value_manager_UP"]=float(params["AverageValue"])*float(params["MANAGER_CANDLE_MUL_UP"])
+                    params["value_manager_DOWN"] = float(params["AverageValue"]) * float(params["MANAGER_CANDLE_MUL_DOWN"])
                     params["value_worker"]=float(params["AverageValue"])*float(params["WORKER_CANDLE_MUL"])
                     # "buygap":None,"sellgap":None, "buyday":None,'sellday':None,
                     if  params['USE_PREVIOUSDAY_HIGH_LOW'] == True:
@@ -350,75 +365,333 @@ def main_strategy():
                         orderlog=f"{timestamp} Worker candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_worker']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
+                        # ,USE_CLOSING_CRITERIA_WORKER,USE_CLOSING_CRITERIA_MANAGER,USE_CLOSING_CRITERIA_BOSS,ClosePercentage_WORKER,ClosePercentage_MANAGER,ClosePercentage_BOSS
                         if params['USE_WORKER']==True:
                             params['candle_type']='WORKER'
                         else:
-                            params["TradingEnabled"] = False
+                            params['candle_type'] = None
                             params["NotTradingReason"] =  f"{timestamp} Worker Candle Usage is disabled {symbol}"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
 
-                    if params["Rangeeee"] >= params["value_worker"] and params["Rangeeee"] <= params["value_manager"]:
+                    if params["Rangeeee"] >= params["value_manager_DOWN"]and params["Rangeeee"] <= params["value_manager_UP"]:
                         orderlog = f"Manager candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_manager']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
                         if params['USE_MANAGER'] ==True:
                             params['candle_type']='MANAGER'
                         else:
-                            params["TradingEnabled"] = False
+                            params['candle_type'] = None
                             params["NotTradingReason"] =  f"{timestamp} Manager Candle Usage is disabled {symbol} "
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
-                    if  params["Rangeeee"] >= params["value_manager"]:
+                    if  params["Rangeeee"] >= params["value_boss"]:
                         orderlog = f"Boss candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_boss']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
                         if params['USE_BOSS']==True:
-                            params['candle_type']='BOSS'
+                            if params['USE_CLOSING_CRITERIA_BOSS']==False:
+                                params['candle_type']='BOSS'
+                            if params['USE_CLOSING_CRITERIA_BOSS'] == True:
+                                if (close_value > open_value):
+                                    candlerange = high_value - low_value
+                                    perapproved = candlerange * params["ClosePercentage_BOSS"] * 0.01
+                                    closedist = abs(close_value - low_value)
+                                    if closedist>=params["value_boss"]:
+                                        params['candle_type'] = 'BOSS'
+                                    else:
+                                        params['candle_type'] = None
+                                        orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
+                                        print(orderlog)
+                                        write_to_order_logs(orderlog)
+                                if (close_value < open_value):
+                                    candlerange = high_value - low_value
+                                    perapproved = candlerange * params["ClosePercentage"] * 0.01
+                                    closedist = abs(high_value - close_value)
+                                    if closedist>=params["value_boss"]:
+                                        params['candle_type'] = 'BOSS'
+                                    else:
+                                        params['candle_type'] = None
+                                        orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
+                                        print(orderlog)
+                                        write_to_order_logs(orderlog)
 
                         else:
-                            params["TradingEnabled"] = False
                             params["NotTradingReason"] =  f"{timestamp} BOSS Candle Usage is disabled {symbol} "
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
-                    if params["USE_CLOSING_CRITERIA"]==True:
-                        if (close_value > open_value):
-                            candlerange = high_value-low_value
-                            perapproved = candlerange * params["ClosePercentage"] * 0.01
-                            closedist = abs(close_value-low_value)
-                            if closedist<perapproved:
-                                params["TradingEnabled"] = False
-                                params[
-                                    "NotTradingReason"] = f"Close dist from low : {closedist} is not 80 % f candle range: {candlerange}, 80% value : {perapproved}"
-
-                                orderlog = f"{params['Symbol']} Reason for not trading :{params['NotTradingReason']} "
-                                print(orderlog)
-                                write_to_order_logs(orderlog)
 
 
-                        if (close_value < open_value):
-                            candlerange = high_value - low_value
-                            perapproved = candlerange * params["ClosePercentage"] * 0.01
-                            closedist = abs(high_value - close_value)
-                            if closedist < perapproved:
-                                params["TradingEnabled"] = False
-                                params[
-                                    "NotTradingReason"] = f"Close dist from low : {closedist} is not 80 % f candle range: {candlerange}, 80% value : {perapproved}"
-
-                                orderlog = f"{params['Symbol']} Reason for not trading :{params['NotTradingReason']} "
-                                print(orderlog)
-                                write_to_order_logs(orderlog)
-
+                # "buy200":None,"sell200":None,"buy20":None,"sell20":None,"buycrp":None,"sellcpr":None,"45buy":None,"45sell":None,
+                #                 "buyday":None,'sellday':None,"buygap":None,"sellgap":None
+                # "InitialTrade":None,"BUY":False,"SHORT":False
                 if params["TradingEnabled"] == True and start_time <=current_time <= end_time:
-                    pass
-                    # buy con
-                    # sell con
+                    ltp = float(FivePaisaIntegration.get_ltp(int(params['ScripCode'])))
+                    print(f'Symbol: {symbol}, ltp {ltp}')
+                    if (
+                            params["buy200"]==True and
+                            params["buy20"]==True and
+                            params["buycrp"]==True and
+                            params["45buy"] == True and
+                            params["buygap"] == True and
+                            params["buyday"] == True and
+                            params["BUY"] == False and
+                            params["count"] <= params["NoOfCounterTrade"] and
+                            (params['candle_type'] == 'MANAGER' or params['candle_type'] == 'worker') and
+                            ltp >= params["high_value"]
+                    ):
+                        params["BUY"] = True
+                        params["SHORT"] = False
+                        params["EntryPrice"] = ltp
+                        params["count"] = params["count"] + 1
+                        params["InitialTrade"]="BUY"
+                        if params["USE_TSL"] ==True:
+                            params["NextTslLevel"] = params["high_value"]+params["ATR"]
+
+                        if params['candle_type'] == 'WORKER':
+                            stoploss = params["low_value"]
+                            params["StoplossValue"] = stoploss
+                            diff = params["high_value"] - stoploss
+                            params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_WORKER"])
+                            if params["USE_PARTIAL_PROFIT"]==True:
+                                params['partialprofitval']= float(diff * params["PartProfitMultipler"])
+                                params['partialprofitval'] = params["high_value"]+params["PartProfitMultipler"]
+                        if params['candle_type']=='MANAGER':
+                            stoploss = params["low_value"]
+                            params["StoplossValue"] = stoploss
+                            diff = params["high_value"] - stoploss
+                            params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_MANAGER"])
+                            if params["USE_PARTIAL_PROFIT"]==True:
+                                params['partialprofitval']= float(diff * params["PartProfitMultipler"])
+                                params['partialprofitval'] = params["high_value"]+params["PartProfitMultipler"]
+                        orderlog = (
+                            f"{timestamp} Buy order executed @ {symbol} @ {ltp} @ quantity: {params['Quantity']}, @ candle_type: {params['candle_type']},length={diff}, Target = {params['TargetValue']}"
+                            f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ")
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
+
+
+
+                        # if params['candle_type'] == 'BOSS':
+                        #     stoploss = params["low_value"]
+
+                    if (
+                        params["sell200"] == True and
+                        params["sell20"] == True and
+                        params["sellcpr"] == True and
+                        params["45sell"] == True and
+                        params["sellday"] == True and
+                        params["sellgap"] == True and
+                        params["SHORT"] == False and
+                        params["count"] <= params["NoOfCounterTrade"] and
+                        (params['candle_type'] == 'MANAGER' or params['candle_type'] == 'worker') and
+                        ltp <= params["low_value"]
+                    ):
+                        params["BUY"] =  False
+                        params["SHORT"] = True
+                        params["EntryPrice"] = ltp
+                        params["count"] = params["count"] + 1
+                        params["InitialTrade"] = "SHORT"
+                        if params["USE_TSL"] ==True:
+                            params["NextTslLevel"] = params["high_value"]+params["ATR"]
+
+                        if params['candle_type'] == 'WORKER':
+                            stoploss = params["high_value"]
+                            params["StoplossValue"] = stoploss
+                            diff = stoploss - params["low_value"]
+                            params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_WORKER"])
+                            params["TargetValue"] = params["low_value"]-params["TargetValue"]
+                            if params["USE_PARTIAL_PROFIT"]==True:
+                                params['partialprofitval']= float(diff * params["PartProfitMultipler"])
+                                params['partialprofitval'] = params["low_value"]-params["PartProfitMultipler"]
+
+                        if params['candle_type']=='MANAGER':
+                            stoploss = params["high_value"]
+                            params["StoplossValue"] = stoploss
+                            diff = stoploss - params["low_value"]
+                            params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_MANAGER"])
+                            params["TargetValue"] = params["low_value"] - params["TargetValue"]
+                            if params["USE_PARTIAL_PROFIT"]==True:
+                                params['partialprofitval']= float(diff * params["PartProfitMultipler"])
+                                params['partialprofitval'] = params["low_value"]-params["PartProfitMultipler"]
+                        orderlog = (f"{timestamp} Sell order executed @ {symbol} @ {ltp} @ quantity: {params['Quantity']}, @ candle_type: {params['candle_type']},length={diff}, Target = {params['TargetValue']}"
+                                    f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ")
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
+
+                    if params["BUY"] == True:
+                        if params["USE_TSL"] ==True:
+                            # params["NextTslLevel"] = params["high_value"]+params["ATR"]
+                            if ltp >= params["NextTslLevel"] and params["NextTslLevel"]>0:
+                                params["NextTslLevel"]=params["NextTslLevel"]+params["ATR"]
+                                params["StoplossValue"]=params["StoplossValue"]+params["ATR"]
+                                orderlog = (f"{timestamp} TSL executed for  buy trade @ {symbol} ,ltp ={ltp} , next tsl level ={params['NextTslLevel'] }, updated sl{params['StoplossValue']}")
+                                print(orderlog)
+                                write_to_order_logs(orderlog)
+
+
+
+
+                        if(
+                                ltp>=params["TargetValue"] and
+                                params["TargetValue"]>0 and
+                                (
+                                 params['candle_type'] == 'MANAGER' or
+                                 params['candle_type'] == 'worker'
+                                )
+                        ):
+                            params["TargetValue"]=0
+                            params["TradingEnabled"] = False
+                            orderlog = (f"{timestamp} Target executed for buy trade @ {symbol}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if params["USE_PARTIAL_PROFIT"] == True:
+                            if (
+                                    ltp>=params['partialprofitval'] and
+                                    params['partialprofitval']>0 and
+                                (
+                                 params['candle_type'] == 'MANAGER' or
+                                 params['candle_type'] == 'worker'
+                                )
+                            ):
+                                params['partialprofitval']=0
+                                orderlog = (f"{timestamp} Partial profit executed for buy trade @ {symbol}")
+                                print(orderlog)
+                                write_to_order_logs(orderlog)
+
+                        if (
+                                ltp <= params["StoplossValue"] and
+                                (
+                                        params['candle_type'] == 'MANAGER' or
+                                        params['candle_type'] == 'worker'
+                                )and
+                                params["StoplossValue"] > 0
+                        ):
+                            params["StoplossValue"]=0
+                            orderlog = (
+                                f"{timestamp} Stoploss executed for buy trade @ {symbol}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                    if params["SHORT"] == True:
+                        if ltp <= params["NextTslLevel"] and params["NextTslLevel"] > 0:
+                            params["NextTslLevel"] = params["NextTslLevel"] - params["ATR"]
+                            params["StoplossValue"] = params["StoplossValue"] - params["ATR"]
+                            orderlog = (
+                                f"{timestamp} TSL executed for  sell trade @ {symbol} ,ltp ={ltp} , next tsl level ={params['NextTslLevel']}, updated sl{params['StoplossValue']}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if ltp<=params["TargetValue"] and params["TargetValue"]>0:
+                            params["TargetValue"]=0
+                            params["TradingEnabled"] = False
+                            orderlog = (
+                                f"{timestamp} Target executed for SELL trade @ {symbol}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+                        if params["USE_PARTIAL_PROFIT"] == True:
+                            if (
+                                    ltp<=params['partialprofitval'] and
+                                    params['partialprofitval']>0 and
+                                (
+                                 params['candle_type'] == 'MANAGER' or
+                                 params['candle_type'] == 'worker'
+                                )
+                            ):
+                                params['partialprofitval']=0
+                                orderlog = (f"{timestamp} Partial profit executed for sell trade @ {symbol}")
+                                print(orderlog)
+                                write_to_order_logs(orderlog)
+
+                        if ltp >= params["StoplossValue"] and params["StoplossValue"] > 0:
+                            params["StoplossValue"]=0
+                            orderlog = (f"{timestamp} Stoploss executed for SELL trade @ {symbol}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+
+
+                    if (
+                            params["close_value"] >params["open_value"] and
+                            params['candle_type'] == 'BOSS' and
+                            params["bigbosstrade"] == False
+                    ):
+                        params["bigbosstrade"] = True
+                        params["bigbosstradetype"] = "SHORT"
+                        params["StoplossValue"] = params["ATR"]+params["high_value"]
+                        params["TargetValue"] = params['Rangeeee']*params["TargetBossPercentage"]*0.01
+                        params["TargetValue"]=params["high_value"]-params["TargetValue"]
+                        orderlog = (f"{timestamp} Sell trade executed  @ {symbol},candle_type: {params['candle_type']}, candle size : {params['Rangeeee']}, TP={params['TargetValue']}, SL={params['StoplossValue']}")
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
+
+                    if (
+                            params["close_value"] <params["open_value"] and
+                            params['candle_type'] == 'BOSS' and
+                            params["bigbosstrade"] == False
+                    ):
+                        params["bigbosstrade"] = True
+                        params["bigbosstradetype"] = "BUY"
+                        params["StoplossValue"] =   params["low_value"]-params["ATR"]
+                        params["TargetValue"] = params['Rangeeee'] * params["TargetBossPercentage"] * 0.01
+                        params["TargetValue"] = params["low_value"] + params["TargetValue"]
+                        orderlog = (f"{timestamp} Buy trade executed  @ {symbol},candle_type: {params['candle_type']}, candle size : {params['Rangeeee']}, TP={params['TargetValue']}, SL={params['StoplossValue']}")
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
+
+                    if params['candle_type'] == 'BOSS' and params["bigbosstrade"] == True:
+                        if(
+                                params["bigbosstradetype"] == "BUY" and
+                                ltp >=params["TargetValue"] and params["TargetValue"]>0
+                        ):
+                            orderlog = (f"{timestamp} Target executed buy trade @ {ltp}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+                            params["TargetValue"] =0
+
+                        if (
+                                params["bigbosstradetype"] == "BUY" and
+                                ltp <= params["StoplossValue"] and params["StoplossValue"] > 0
+                        ):
+                            orderlog = (f"{timestamp} Stoploss executed buy trade @ {ltp}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+                            params["StoplossValue"] = 0
+
+                    if params['candle_type'] == 'BOSS' and params["bigbosstrade"] == True:
+                        if(
+                                params["bigbosstradetype"] == "SHORT" and
+                                ltp <=params["TargetValue"] and params["TargetValue"]>0
+                        ):
+                            orderlog = (f"{timestamp} Target executed SHORT trade @ {ltp}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+                            params["TargetValue"] =0
+
+                        if (
+                                params["bigbosstradetype"] == "SHORT" and
+                                ltp >= params["StoplossValue"] and params["StoplossValue"] > 0
+                        ):
+                            orderlog = (f"{timestamp} Stoploss executed SHORT trade @ {ltp}")
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
+                            params["StoplossValue"] = 0
+
+
+
+
+
+
+
+
+
 
     except Exception as e:
         print("Error happened in Main strategy loop: ", str(e))
@@ -427,14 +700,9 @@ def main_strategy():
 
 
 while True:
-
     Stoptime = credentials_dict.get('Stoptime')
-
     stop_time = datetime.strptime(Stoptime, '%H:%M').time()
-
     now = datetime.now().time()
     if now < stop_time:
         main_strategy()
         time.sleep(1)
-
-

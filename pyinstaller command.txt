@@ -1,0 +1,4 @@
+scanner: pyinstaller --onefile --hidden-import=py5paisa Scanner.py
+
+tradeexeution : pyinstaller --onefile --hidden-import=py5paisa TradeExecution.py
+

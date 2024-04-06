@@ -581,7 +581,7 @@ def main_strategy():
                             write_to_order_logs(orderlog)
 
                     if params["SHORT"] == True:
-                        if ltp <= params["NextTslLevel"] and params["NextTslLevel"] > 0:
+                        if ltp <= params["NextTslLevel"] and params["NextTslLevel"] > 0 and params["USE_TSL"] ==True:
                             params["NextTslLevel"] = params["NextTslLevel"] - params["ATR"]
                             params["StoplossValue"] = params["StoplossValue"] - params["ATR"]
                             orderlog = (

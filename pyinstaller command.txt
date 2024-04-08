@@ -1,4 +1,5 @@
-scanner: pyinstaller --onefile --hidden-import=py5paisa Scanner.py
+scanner1: pyinstaller --onefile --hidden-import=py5paisa Scanner1.py
+scanner2: pyinstaller --onefile --hidden-import=py5paisa Scanner2.py
 
-tradeexeution : pyinstaller --onefile --hidden-import=py5paisa TradeExecution.py
+MainStrategy.py : pyinstaller --onefile --hidden-import=py5paisa MainStrategy.py
 

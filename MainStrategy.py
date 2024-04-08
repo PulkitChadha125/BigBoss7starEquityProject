@@ -684,15 +684,6 @@ def main_strategy():
                             write_to_order_logs(orderlog)
                             params["StoplossValue"] = 0
 
-
-
-
-
-
-
-
-
-
     except Exception as e:
         print("Error happened in Main strategy loop: ", str(e))
         traceback.print_exc()

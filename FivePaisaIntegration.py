@@ -78,24 +78,57 @@ def get_historical_data(token,timeframe):
     last_row_values = df.iloc[-1].to_dict()
 
     return last_row_values
+def determine_min(minstr):
+    min = 0
+    if minstr == "1m":
+        min = 1
+    if minstr == "2m":
+        min = 2
+    if minstr == "3m":
+        min = 3
+    if minstr == "5m":
+        min = 5
+    if minstr == "15m":
+        min = 15
+    if minstr == "30m":
+        min = 30
 
+    return min
+def round_down_to_interval(dt, interval_minutes):
+    remainder = dt.minute % interval_minutes
+    minutes_to_current_boundary = remainder
+
+    rounded_dt = dt - timedelta(minutes=minutes_to_current_boundary)
+
+    rounded_dt = rounded_dt.replace(second=0, microsecond=0)
+
+    return rounded_dt
 def get_historical_data_tradeexecution(token, timeframe):
     global client
     current_time = datetime.now()
     if timeframe == "1m":
         delta_minutes = 1
+        delta_minutes2 = 2
     elif timeframe == "2m":
         delta_minutes = 2
+        delta_minutes2 = 4
+    elif timeframe == "3m":
+        delta_minutes = 3
+        delta_minutes2 = 6
     elif timeframe == "5m":
         delta_minutes = 5
+        delta_minutes2 = 10
 
-    desired_time = current_time - timedelta(minutes=delta_minutes)
-    desired_time = desired_time.replace(second=0)
-    desired_time_str = desired_time.strftime('%Y-%m-%d %H:%M:%S')
+    next_specific_part_time = datetime.now() - timedelta(
+        seconds=determine_min(timeframe) * 60)
+    desired_time_str1 = round_down_to_interval(next_specific_part_time,
+                                               determine_min(timeframe))
+    desired_time_str2 = desired_time_str1 - timedelta(
+        seconds=determine_min(timeframe) * 60)
 
-    print("desired time:", desired_time_str)
+    print("desired time:", desired_time_str1)
 
-    from_time = datetime.now() - timedelta(days=4)
+    from_time = datetime.now() - timedelta(days=7)
     to_time = datetime.now()
     df = client.historical_data('N', 'C', token, timeframe, from_time, to_time)
     df["MA20"] = ta.ema(close=df["Close"], length=20)
@@ -103,7 +136,7 @@ def get_historical_data_tradeexecution(token, timeframe):
     df["ATR"] = ta.atr(high=df["High"],low=df["Low"],close=df["Close"], length=14)
     df['Datetime'] = pd.to_datetime(df['Datetime'])
     last_two_rows = df.iloc[-2:]
-    desired_row = last_two_rows[last_two_rows['Datetime'] == desired_time_str]
+    desired_row = last_two_rows[last_two_rows['Datetime'] == desired_time_str1]
 
     if not desired_row.empty:
         desired_row_values = desired_row.iloc[0].to_dict()

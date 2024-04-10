@@ -56,13 +56,6 @@ def get_user_settings():
         df = pd.read_csv(csv_path)
         df.columns = df.columns.str.strip()
         result_dict = {}
-        # Symbol,HighFortyFive,LowFortyFive,AverageValue,ScripCode,high,low,Pivot,Bottom Central,Top Central,Quantity,USE_TWENTY_MA,USE_TWO_HUNDRED_MA,
-        # CHECK_GAP_CONDITION,USE_CPR,USE_FORTYFIVE,USE_PREVIOUSDAY_HIGH_LOW,USE_BOSS,USE_MANAGER,USE_WORKER,REWARD_MULTIPLIER_BOSS,
-        # REWARD_MULTIPLIER_WORKER,REWARD_MULTIPLIER_MANAGER,WORKER_CANDLE_MUL,BOSS_CANDLE_MUL,
-        # MANAGER_CANDLE_MUL,CounterDecision,NumBerOfCounterTrade,USE_PARTIAL_PROFIT,
-        # PartialProfitPercentage_qty_size,
-        # PartProfitMultipler,USE_CANDLE_CLOSING,CANDLE_CLOSEING_PERCENTAGE,USE_TSL,TSL_POINTS
-        # USE_CLOSING_CRITERIA_WORKER,USE_CLOSING_CRITERIA_MANAGER,USE_CLOSING_CRITERIA_BOSS,ClosePercentage_WORKER,ClosePercentage_MANAGER,ClosePercentage_BOSS
         for index, row in df.iterrows():
             symbol_dict = {
                 'Symbol': row['Symbol'],'HighFortyFive': int(row['HighFortyFive']),'LowFortyFive':float(row['LowFortyFive']),
@@ -72,10 +65,9 @@ def get_user_settings():
                 'USE_TWENTY_MA': (row['USE_TWENTY_MA']),'USE_TWO_HUNDRED_MA': (row['USE_TWO_HUNDRED_MA']),'CHECK_GAP_CONDITION': (row['CHECK_GAP_CONDITION']),
                 'USE_CPR': (row['USE_CPR']),'USE_FORTYFIVE': (row['USE_FORTYFIVE']),'USE_PREVIOUSDAY_HIGH_LOW': (row['USE_PREVIOUSDAY_HIGH_LOW']),
                 'USE_BOSS': (row['USE_BOSS']),'USE_MANAGER': (row['USE_MANAGER']),'USE_WORKER': (row['USE_WORKER']),
-                'REWARD_MULTIPLIER_BOSS': float(row['REWARD_MULTIPLIER_BOSS']),'REWARD_MULTIPLIER_WORKER': float(row['REWARD_MULTIPLIER_WORKER']),
+                'TargetBossPercentage': float(row['TargetBossPercentage']),'REWARD_MULTIPLIER_WORKER': float(row['REWARD_MULTIPLIER_WORKER']),
                 'MANAGER_CANDLE_MUL_UP': float(row['MANAGER_CANDLE_MUL_UP']),'MANAGER_CANDLE_MUL_DOWN': float(row['MANAGER_CANDLE_MUL_DOWN']),'BOSS_CANDLE_MUL': float(row['BOSS_CANDLE_MUL']),
-                'MANAGER_CANDLE_MUL': float(row['MANAGER_CANDLE_MUL']),'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),
-                'NoOfCounterTrade': float(row['NoOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
+                'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),'NoOfCounterTrade': float(row['NoOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
                 'PartialProfitPercentage_qty_size': float(row['PartialProfitPercentage_qty_size']),'USE_CLOSING_CRITERIA_BOSS': (row['USE_CLOSING_CRITERIA_BOSS']),
                 'ClosePercentage_BOSS': float(row['ClosePercentage_BOSS']),'USE_TSL': (row['USE_TSL']),
                 "StartTime": row['StartTime'],"StopTime": row['StopTime'],"open_value" : None,"high_value" :None,"low_value" : None,
@@ -83,7 +75,7 @@ def get_user_settings():
                 "value_manager_UP": None,"value_manager_DOWN": None,"value_worker": None,"StoplossValue": None,"TargetValue": None,'candle_type':None,
                 "MA20":None,"MA200":None,"buy200":None,"sell200":None,"buy20":None,"sell20":None,"buycrp":None,"sellcpr":None,"45buy":None,"45sell":None,
                 "buyday":None,'sellday':None,"buygap":None,"sellgap":None,"count":None,"InitialTrade":None,"BUY":False,"SHORT":False,"ATR":None,
-                "partialprofitval":None,"Quantity":None,"partial_qty":None,"Remain_qty":None,"bigbosstrade":False,"bigbosstradetype":None,"NextTslLevel":None
+                "partialprofitval":None,"Quantity":None,"partial_qty":None,"Remain_qty":None,"bigbosstrade":False,"bigbosstradetype":None,"NextTslLevel":None,"RunOnceHistory":False,
             }
             result_dict[row['Symbol']] = symbol_dict
         print("result_dict: ",result_dict)
@@ -109,13 +101,15 @@ def main_strategy():
             # Get the current time as a datetime object
             current_time = datetime.now().time()
             g = start_time <= current_time <= end_time
-            print(f"{symbol}: {g}")
+
             if isinstance(symbol_value, str):
                 if params["RunOnceHistory"] == False and start_time <= current_time <= end_time:
                     params["RunOnceHistory"] = True
                     if latencyadd == False:
                         latencyadd = True
                         time.sleep(2)
+
+                    print(f"{symbol_value}, {params['ScripCode']}")
 
                     data = FivePaisaIntegration.get_historical_data_tradeexecution(int(params['ScripCode']),
                                                                                    str(params['TimeFrame']))
@@ -151,7 +145,7 @@ def main_strategy():
                     params["value_manager_UP"]=float(params["AverageValue"])*float(params["MANAGER_CANDLE_MUL_UP"])
                     params["value_manager_DOWN"] = float(params["AverageValue"]) * float(params["MANAGER_CANDLE_MUL_DOWN"])
                     params["value_worker"]=float(params["AverageValue"])*float(params["WORKER_CANDLE_MUL"])
-                    # "buygap":None,"sellgap":None, "buyday":None,'sellday':None,
+
                     if  params['USE_PREVIOUSDAY_HIGH_LOW'] == True:
                         if params["high_value"] >= params["high"]:
                             params["buyday"]= True

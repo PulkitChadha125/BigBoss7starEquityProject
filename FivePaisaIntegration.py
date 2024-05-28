@@ -126,7 +126,7 @@ def get_historical_data_tradeexecution(token, timeframe):
     desired_time_str2 = desired_time_str1 - timedelta(
         seconds=determine_min(timeframe) * 60)
 
-    print("desired time:", desired_time_str1)
+    print("desired time1:", desired_time_str1)
 
     from_time = datetime.now() - timedelta(days=7)
     to_time = datetime.now()

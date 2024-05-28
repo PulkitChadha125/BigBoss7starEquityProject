@@ -141,7 +141,6 @@ def main_strategy():
 
 
                     params["value_boss"]=float(params["AverageValue"])*float(params["BOSS_CANDLE_MUL"])
-
                     params["value_manager_UP"]=float(params["AverageValue"])*float(params["MANAGER_CANDLE_MUL_UP"])
                     params["value_manager_DOWN"] = float(params["AverageValue"]) * float(params["MANAGER_CANDLE_MUL_DOWN"])
                     params["value_worker"]=float(params["AverageValue"])*float(params["WORKER_CANDLE_MUL"])
@@ -149,26 +148,26 @@ def main_strategy():
                     if  params['USE_PREVIOUSDAY_HIGH_LOW'] == True:
                         if params["high_value"] >= params["high"]:
                             params["buyday"]= True
-                            orderlog = f"{timestamp} High is greater than high of previous day   {symbol}"
+                            orderlog = f"{timestamp} High {params['high_value']} of today 1st candle is greater than high of previous day {params['high']}, buy trade can happen {symbol}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"] < params["high"]:
                             params["buyday"]= False
-                            params["NotTradingReason"] = f"{timestamp} High is less than high of previous day   {symbol}"
+                            params["NotTradingReason"] = f"{timestamp} High {params['high_value']} of today 1st candle is less than high of previous day {params['high']}, buy trade cannot happen   {symbol}"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] <= params["low"]:
                             params["sellday"]= True
-                            orderlog = f"{timestamp} low price is below low of previous day {symbol}"
+                            orderlog = f"{timestamp} low price {params['low_value']} is below low of previous day {params['low']},  sell trade can happen  {symbol}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] > params["low"]:
                             params["sellday"]= False
-                            orderlog = f"{timestamp} low price is above low of previous day {symbol}"
+                            orderlog = f"{timestamp} low price {params['low_value']} is above low of previous day {params['low']}, sell trade cannot happen    {symbol}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
@@ -182,28 +181,32 @@ def main_strategy():
 
 
                     if params['CHECK_GAP_CONDITION'] == True:
-                        if params["high_value"] <= params["high"]:
+                        if params["low_value"] <= params["high"]:
                             params["buygap"]= True
-                            orderlog = f"{timestamp} Candle is inside previous day range buy condition {symbol}"
+                            params["sellgap"] = True
+                            orderlog = f"{timestamp} Candle low is inside pdh trade condition satisfied {symbol},9:15 low={params['low_value']}, previous day high={params['high']}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] > params["high"]:
                             params["buygap"]= False
-                            params["NotTradingReason"] = f"{timestamp} Candle is outside previous day range buy condition {symbol}"
+                            params["sellgap"] = False
+                            params["NotTradingReason"] = f"{timestamp} Candle low is outside pdh trade condition not active {symbol},9:15 low={params['low_value']}, previous day high={params['high']}"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
-                        if params["low_value"] >= params["low"]:
+                        if params["high_value"] >= params["low"]:
                             params["sellgap"]= True
-                            orderlog = f"{timestamp}Candle is inside previous day range sell condition {symbol}"
+                            params["buygap"] = True
+                            orderlog = f"{timestamp}Candle high is inside pdl trade condition active{symbol},9:15 high={params['high_value']}, previous day low={params['low']}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
-                        if params["low_value"] < params["low"]:
+                        if params["high_value"] < params["low"]:
                             params["sellgap"]= False
-                            orderlog = f"{timestamp} Candle is outside previous day range sell condition {symbol}"
+                            params["buygap"] = False
+                            orderlog = f"{timestamp} Candle high is outside pdl trade condition  not active {symbol},9:15 high={params['high_value']}, previous day low={params['low']}"
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
@@ -219,26 +222,26 @@ def main_strategy():
                     if params['USE_CPR'] == True:
                         if params["high_value"] >= params["Top Central"]:
                             params["buycrp"]= True
-                            orderlog = f"{timestamp} High is greater than top cpr {symbol}"
+                            orderlog = f"{timestamp} High {params['high_value']} is greater than top cpr {params['Top Central']}, {symbol} , buy condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"] < params["Top Central"]:
                             params["buycrp"]= False
-                            params["NotTradingReason"] = f"{timestamp} High is less than top cpr{symbol}"
+                            params["NotTradingReason"] = f"{timestamp} High {params['high_value']}  is less than top cpr {params['Top Central']}, {symbol}, buy condition not satisfied"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] <= params["Bottom Central"]:
                             params["sellcpr"]= True
-                            orderlog = f"{timestamp} low is less than bottom cpr{symbol}"
+                            orderlog = f"{timestamp} low {params['low_value']} is less than bottom cpr {params['Bottom Central']} ,{symbol}, sell condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] > params["Bottom Central"]:
                             params["sellcpr"]= False
-                            orderlog = f"{timestamp} low is greater than bottom cpr {symbol}"
+                            orderlog = f"{timestamp} low {params['low_value']} is greater than bottom cpr {params['Bottom Central']}, {symbol}, sell condition not satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
@@ -254,26 +257,27 @@ def main_strategy():
                     if params["USE_FORTYFIVE"] == True:
                         if params["high_value"] >= params["HighFortyFive"]:
                             params["45buy"]= True
-                            orderlog = f"{timestamp} High is greater than high of previous day 45 min {symbol}"
+                            params["NotTradingReason"]= f"{timestamp} Candle High {params['high_value']} is greater than high of previous day 45 min {params['HighFortyFive']}, {symbol} buy condition satisfied"
+                            orderlog=params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"] < params["HighFortyFive"]:
                             params["45buy"]= False
-                            params["NotTradingReason"] = f"{timestamp} High is less than high of previous day 45 min {symbol}"
+                            params["NotTradingReason"] = f"{timestamp} Candle High {params['high_value']} is less than high of previous day 45 min {params['HighFortyFive']} , {symbol} buy condition not satisfied"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] <= params["LowFortyFive"]:
                             params["45sell"]= True
-                            orderlog = f"{timestamp} low price is below low of previous day 45 min {symbol}"
+                            orderlog = f"{timestamp} Candle low price {params['low_value']} is below low of previous day 45 min {params['LowFortyFive']} {symbol}, sell condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] > params["LowFortyFive"]:
                             params["45sell"]= False
-                            orderlog = f"{timestamp} low price is above low of previous day 45 min {symbol}"
+                            orderlog = f"{timestamp} Candle low price {params['low_value']} is above low of previous day 45 min {params['LowFortyFive']} {symbol}, sell condition not satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
@@ -287,26 +291,26 @@ def main_strategy():
                     if params["USE_TWO_HUNDRED_MA"] == True:
                         if params["high_value"] >= params["MA200"]:
                             params["buy200"]= True
-                            orderlog = f"{timestamp} 20 ma is below high of trigger candle for {symbol}"
+                            orderlog = f"{timestamp} 200 ma  {params['MA200']} is below candle high {params['high_value']} for  {symbol}, buy condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"] < params["MA200"]:
                             params["buy200"]= False
-                            params["NotTradingReason"] = f"{timestamp} 20 ma is above high of trigger candle for {symbol}"
+                            params["NotTradingReason"] = f"{timestamp} 200 ma  {params['MA200']} is above candle high= {params['high_value']} for {symbol}, buy condition not satisfied"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] <= params["MA200"]:
                             params["sell200"]= True
-                            orderlog = f"{timestamp} low price is below 200 ema {symbol}"
+                            orderlog = f"{timestamp} Candle low  {params['low_value']} is below 200 ma {params['MA200']} ,{symbol}, sell condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"] > params["MA200"]:
                             params["sell200"]= False
-                            orderlog = f"{timestamp} low price is above 200 ema {symbol}"
+                            orderlog = f"{timestamp} Candle low  {params['low_value']} is above 200 ma {params['MA200']}, {symbol}, sell condition not satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
                     else:
@@ -321,26 +325,26 @@ def main_strategy():
                     if params["USE_TWENTY_MA"]==True:
                         if params["high_value"]>=params["MA20"]:
                             params["buy20"]: True
-                            orderlog = f"{timestamp} 20 ma is below high of trigger candle for {symbol}"
+                            orderlog = f"{timestamp} 20 ma ={params['MA20']} is below candle high= {params['high_value']}  for {symbol}, buy condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"]<params["MA20"]:
                             params["buy20"]: False
-                            params["NotTradingReason"] = f"{timestamp} 20 ma is above high of trigger candle for {symbol}"
+                            params["NotTradingReason"] = f"{timestamp} 20 ma={params['MA20']} is above candle high {params['high_value']} for {symbol}, buy condition not satisfied"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"]<=params["MA20"]:
                             params["sell20"]: True
-                            orderlog = f"{timestamp} low price is below 20 ema {symbol}"
+                            orderlog = f"{timestamp} low price = {params['low_value']} is below 20 ma={params['MA20']} {symbol}, sell condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"]>params["MA20"]:
                             params["sell20"]: False
-                            orderlog = f"{timestamp} low price is above 20 ema {symbol}"
+                            orderlog = f"{timestamp} low price = {params['low_value']} is above 20 ma={params['MA20']}, {symbol},sell condition not satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
@@ -355,70 +359,66 @@ def main_strategy():
 
 
 
-                    if params["Rangeeee"]<=params["value_worker"]:
-                        orderlog=f"{timestamp} Worker candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_worker']}"
+                    if params["Rangeeee"]<=params["value_worker"] and params['USE_WORKER']==True:
+                        orderlog=f"{timestamp} Worker found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_worker']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
-                        # ,USE_CLOSING_CRITERIA_WORKER,USE_CLOSING_CRITERIA_MANAGER,USE_CLOSING_CRITERIA_BOSS,ClosePercentage_WORKER,ClosePercentage_MANAGER,ClosePercentage_BOSS
-                        if params['USE_WORKER']==True:
-                            params['candle_type']='WORKER'
-                        else:
-                            params['candle_type'] = None
-                            params["NotTradingReason"] =  f"{timestamp} Worker Candle Usage is disabled {symbol}"
-                            orderlog = params["NotTradingReason"]
-                            print(orderlog)
-                            write_to_order_logs(orderlog)
+                        params['candle_type']='WORKER'
+                    else:
+                        params['candle_type'] = None
+                        params["NotTradingReason"] =  f"{timestamp} Worker Candle Usage is disabled {symbol}"
+                        orderlog = params["NotTradingReason"]
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
 
 
-                    if params["Rangeeee"] >= params["value_manager_DOWN"]and params["Rangeeee"] <= params["value_manager_UP"]:
+                    if params["Rangeeee"] >= params["value_manager_DOWN"]and params["Rangeeee"] <= params["value_manager_UP"] and params['USE_MANAGER'] ==True:
                         orderlog = f"Manager candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_manager']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
-                        if params['USE_MANAGER'] ==True:
-                            params['candle_type']='MANAGER'
-                        else:
-                            params['candle_type'] = None
-                            params["NotTradingReason"] =  f"{timestamp} Manager Candle Usage is disabled {symbol} "
-                            orderlog = params["NotTradingReason"]
-                            print(orderlog)
-                            write_to_order_logs(orderlog)
+                        params['candle_type']='MANAGER'
+                    else:
+                        params['candle_type'] = None
+                        params["NotTradingReason"] =  f"{timestamp} Manager Candle Usage is disabled {symbol} "
+                        orderlog = params["NotTradingReason"]
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
 
-                    if  params["Rangeeee"] >= params["value_boss"]:
+                    if  params["Rangeeee"] >= params["value_boss"] and params['USE_BOSS']==True:
                         orderlog = f"Boss candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_boss']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
-                        if params['USE_BOSS']==True:
-                            if params['USE_CLOSING_CRITERIA_BOSS']==False:
-                                params['candle_type']='BOSS'
-                            if params['USE_CLOSING_CRITERIA_BOSS'] == True:
-                                if (close_value > open_value):
-                                    candlerange = high_value - low_value
-                                    perapproved = candlerange * params["ClosePercentage_BOSS"] * 0.01
-                                    closedist = abs(close_value - low_value)
-                                    if closedist>=params["value_boss"]:
-                                        params['candle_type'] = 'BOSS'
-                                    else:
-                                        params['candle_type'] = None
-                                        orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
-                                        print(orderlog)
-                                        write_to_order_logs(orderlog)
-                                if (close_value < open_value):
-                                    candlerange = high_value - low_value
-                                    perapproved = candlerange * params["ClosePercentage"] * 0.01
-                                    closedist = abs(high_value - close_value)
-                                    if closedist>=params["value_boss"]:
-                                        params['candle_type'] = 'BOSS'
-                                    else:
-                                        params['candle_type'] = None
-                                        orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
-                                        print(orderlog)
-                                        write_to_order_logs(orderlog)
+                        if params['USE_CLOSING_CRITERIA_BOSS']==False:
+                            params['candle_type']='BOSS'
+                        if params['USE_CLOSING_CRITERIA_BOSS'] == True:
+                            if (close_value > open_value):
+                                candlerange = high_value - low_value
+                                perapproved = candlerange * params["ClosePercentage_BOSS"] * 0.01
+                                closedist = abs(close_value - low_value)
+                                if closedist>=params["value_boss"]:
+                                    params['candle_type'] = 'BOSS'
+                                else:
+                                    params['candle_type'] = None
+                                    orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
+                                    print(orderlog)
+                                    write_to_order_logs(orderlog)
+                            if (close_value < open_value):
+                                candlerange = high_value - low_value
+                                perapproved = candlerange * params["ClosePercentage"] * 0.01
+                                closedist = abs(high_value - close_value)
+                                if closedist>=params["value_boss"]:
+                                    params['candle_type'] = 'BOSS'
+                                else:
+                                    params['candle_type'] = None
+                                    orderlog = f"{timestamp} Order not taken in {symbol} closing percentage rule not met "
+                                    print(orderlog)
+                                    write_to_order_logs(orderlog)
 
-                        else:
-                            params["NotTradingReason"] =  f"{timestamp} BOSS Candle Usage is disabled {symbol} "
-                            orderlog = params["NotTradingReason"]
-                            print(orderlog)
-                            write_to_order_logs(orderlog)
+                    else:
+                        params["NotTradingReason"] =  f"{timestamp} BOSS Candle Usage is disabled {symbol} "
+                        orderlog = params["NotTradingReason"]
+                        print(orderlog)
+                        write_to_order_logs(orderlog)
 
 
 
@@ -528,9 +528,6 @@ def main_strategy():
                                 orderlog = (f"{timestamp} TSL executed for  buy trade @ {symbol} ,ltp ={ltp} , next tsl level ={params['NextTslLevel'] }, updated sl{params['StoplossValue']}")
                                 print(orderlog)
                                 write_to_order_logs(orderlog)
-
-
-
 
                         if(
                                 ltp>=params["TargetValue"] and

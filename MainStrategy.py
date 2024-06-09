@@ -427,7 +427,9 @@ def main_strategy():
                 # "InitialTrade":None,"BUY":False,"SHORT":False
                 if params["TradingEnabled"] == True and start_time <=current_time <= end_time:
                     ltp = float(FivePaisaIntegration.get_ltp(int(params['ScripCode'])))
-                    print(f'Symbol: {symbol}, ltp {ltp}')
+                    print(f"Symbol: {symbol}, ltp: {ltp}, buy200:{params['buy200']},buy20:{params['buy20']}"
+                          f"buycrp:{params['buycrp']},45buy:{params['45buy']},buygap:{params['buygap']},buyday:{params['buyday']}"
+                          f"BUY:{params['BUY']},count:{params['count']},candle_type:{params['candle_type']},high_value:{params['high_value']},")
                     if (
                             params["buy200"]==True and
                             params["buy20"]==True and
@@ -474,6 +476,9 @@ def main_strategy():
 
                         # if params['candle_type'] == 'BOSS':
                         #     stoploss = params["low_value"]
+                    print(f"Symbol: {symbol}, ltp: {ltp}, sell200:{params['sell200']},sell20:{params['sell20']}"
+                          f"sellcpr:{params['sellcpr']},45sell:{params['45sell']},sellday:{params['sellday']},sellgap:{params['sellgap']}"
+                          f"SHORT:{params['SHORT']},count:{params['count']},candle_type:{params['candle_type']},low_value:{params['low_value']},")
 
                     if (
                         params["sell200"] == True and

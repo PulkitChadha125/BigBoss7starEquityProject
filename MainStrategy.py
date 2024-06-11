@@ -74,7 +74,7 @@ def get_user_settings():
                 "close_value" :None,"volume_value": None,"NotTradingReason":None,"Rangeeee":None,"value_boss":None,
                 "value_manager_UP": None,"value_manager_DOWN": None,"value_worker": None,"StoplossValue": None,"TargetValue": None,'candle_type':None,
                 "MA20":None,"MA200":None,"buy200":None,"sell200":None,"buy20":None,"sell20":None,"buycrp":None,"sellcpr":None,"45buy":None,"45sell":None,
-                "buyday":None,'sellday':None,"buygap":None,"sellgap":None,"count":None,"InitialTrade":None,"BUY":False,"SHORT":False,"ATR":None,
+                "buyday":None,'sellday':None,"buygap":None,"sellgap":None,"count":0,"InitialTrade":None,"BUY":False,"SHORT":False,"ATR":None,
                 "partialprofitval":None,"Quantity":None,"partial_qty":None,"Remain_qty":None,"bigbosstrade":False,"bigbosstradetype":None,"NextTslLevel":None,"RunOnceHistory":False,
             }
             result_dict[row['Symbol']] = symbol_dict
@@ -324,26 +324,26 @@ def main_strategy():
                     # params["sell200"]
                     if params["USE_TWENTY_MA"]==True:
                         if params["high_value"]>=params["MA20"]:
-                            params["buy20"]: True
+                            params["buy20"]= True
                             orderlog = f"{timestamp} 20 ma ={params['MA20']} is below candle high= {params['high_value']}  for {symbol}, buy condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["high_value"]<params["MA20"]:
-                            params["buy20"]: False
+                            params["buy20"]= False
                             params["NotTradingReason"] = f"{timestamp} 20 ma={params['MA20']} is above candle high {params['high_value']} for {symbol}, buy condition not satisfied"
                             orderlog = params["NotTradingReason"]
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"]<=params["MA20"]:
-                            params["sell20"]: True
+                            params["sell20"]= True
                             orderlog = f"{timestamp} low price = {params['low_value']} is below 20 ma={params['MA20']} {symbol}, sell condition satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
 
                         if params["low_value"]>params["MA20"]:
-                            params["sell20"]: False
+                            params["sell20"]= False
                             orderlog = f"{timestamp} low price = {params['low_value']} is above 20 ma={params['MA20']}, {symbol},sell condition not satisfied"
                             print(orderlog)
                             write_to_order_logs(orderlog)
@@ -427,7 +427,7 @@ def main_strategy():
                 # "InitialTrade":None,"BUY":False,"SHORT":False
                 if params["TradingEnabled"] == True and start_time <=current_time <= end_time:
                     ltp = float(FivePaisaIntegration.get_ltp(int(params['ScripCode'])))
-                    print(f"Symbol: {symbol}, ltp: {ltp}, buy200:{params['buy200']},buy20:{params['buy20']}"
+                    print(f"Symbol: {symbol}, ltp: {ltp}, buy200:{params['buy200']},buy20:{params['buy20']}, "
                           f"buycrp:{params['buycrp']},45buy:{params['45buy']},buygap:{params['buygap']},buyday:{params['buyday']}"
                           f"BUY:{params['BUY']},count:{params['count']},candle_type:{params['candle_type']},high_value:{params['high_value']},")
                     if (

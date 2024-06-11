@@ -1,5 +1,6 @@
 scanner1: pyinstaller --onefile --hidden-import=py5paisa Scanner1.py
 scanner2: pyinstaller --onefile --hidden-import=py5paisa Scanner2.py
 
-MainStrategy.py : pyinstaller --onefile --hidden-import=py5paisa MainStrategy.py
+MainStrategy.py : pyinstaller --onefile --hidden-import=py5paisa --hidden-import=pkg_resources.py2_warn --hidden-import=pkg_resources.main MainStrategy.py
+
 

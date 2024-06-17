@@ -372,19 +372,20 @@ def main_strategy():
                         write_to_order_logs(orderlog)
 
 
-                    if params["Rangeeee"] >= params["value_manager_DOWN"]and params["Rangeeee"] <= params["value_manager_UP"] and params['USE_MANAGER'] ==True:
+                    if params['candle_type'] is None and params["Rangeeee"] >= params["value_manager_DOWN"]and params["Rangeeee"] <= params["value_manager_UP"] and params['USE_MANAGER'] ==True:
                         orderlog = f"Manager candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_manager']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)
                         params['candle_type']='MANAGER'
                     else:
-                        params['candle_type'] = None
-                        params["NotTradingReason"] =  f"{timestamp} Manager Candle Usage is disabled {symbol} "
-                        orderlog = params["NotTradingReason"]
-                        print(orderlog)
-                        write_to_order_logs(orderlog)
+                        if params['candle_type'] is None:
+                            params['candle_type'] = None
+                            params["NotTradingReason"] =  f"{timestamp} Manager Candle Usage is disabled {symbol} "
+                            orderlog = params["NotTradingReason"]
+                            print(orderlog)
+                            write_to_order_logs(orderlog)
 
-                    if  params["Rangeeee"] >= params["value_boss"] and params['USE_BOSS']==True:
+                    if  params['candle_type'] is None and params["Rangeeee"] >= params["value_boss"] and params['USE_BOSS']==True:
                         orderlog = f"Boss candle size found in {symbol} , candlesize = {params['Rangeeee']},worker candle set value: {params['value_boss']}"
                         print(orderlog)
                         write_to_order_logs(orderlog)

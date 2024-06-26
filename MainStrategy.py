@@ -64,7 +64,7 @@ def get_user_settings():
                 'Top Central': float(row['Top Central']),'Risk': float(row['Risk']),'TradingEnabled': row['TradingEnabled'],'TimeFrame': row['TimeFrame'],
                 'USE_TWENTY_MA': (row['USE_TWENTY_MA']),'USE_TWO_HUNDRED_MA': (row['USE_TWO_HUNDRED_MA']),'CHECK_GAP_CONDITION': (row['CHECK_GAP_CONDITION']),
                 'USE_CPR': (row['USE_CPR']),'USE_FORTYFIVE': (row['USE_FORTYFIVE']),'USE_PREVIOUSDAY_HIGH_LOW': (row['USE_PREVIOUSDAY_HIGH_LOW']),
-                'USE_BOSS': (row['USE_BOSS']),'USE_MANAGER': (row['USE_MANAGER']),'USE_WORKER': (row['USE_WORKER']),
+                'USE_BOSS': (row['USE_BOSS']),'USE_MANAGER': (row['USE_MANAGER']),'USE_WORKER': (row['USE_WORKER']),'PartProfitMultipler':float(row['PartProfitMultipler']),
                 'TargetBossPercentage': float(row['TargetBossPercentage']),'REWARD_MULTIPLIER_WORKER': float(row['REWARD_MULTIPLIER_WORKER']),
                 'MANAGER_CANDLE_MUL_UP': float(row['MANAGER_CANDLE_MUL_UP']),'MANAGER_CANDLE_MUL_DOWN': float(row['MANAGER_CANDLE_MUL_DOWN']),'BOSS_CANDLE_MUL': float(row['BOSS_CANDLE_MUL']),
                 'WORKER_CANDLE_MUL':float(row['WORKER_CANDLE_MUL']),'NoOfCounterTrade': float(row['NoOfCounterTrade']),'USE_PARTIAL_PROFIT': (row['USE_PARTIAL_PROFIT']),
@@ -88,7 +88,6 @@ latencyadd=False
 
 def main_strategy():
     global latencyadd, result_dict, next_specific_part_time, total_pnl, runningpnl, niftypnl, bankniftypnl
-
     try:
         for symbol, params in result_dict.items():
             symbol_value = params['Symbol']
@@ -101,7 +100,6 @@ def main_strategy():
             # Get the current time as a datetime object
             current_time = datetime.now().time()
             g = start_time <= current_time <= end_time
-
             if isinstance(symbol_value, str):
                 if params["RunOnceHistory"] == False and start_time <= current_time <= end_time:
                     params["RunOnceHistory"] = True
@@ -137,7 +135,7 @@ def main_strategy():
                     params["MA20"] =float(data['MA20'])
                     params["MA200"] =float(data['MA200'])
                     params["ATR"] = float(data['ATR'])
-
+                    print("atr: ",params["ATR"])
 
 
                     params["value_boss"]=float(params["AverageValue"])*float(params["BOSS_CANDLE_MUL"])
@@ -424,14 +422,15 @@ def main_strategy():
 
 
 
-                # "buy200":None,"sell200":None,"buy20":None,"sell20":None,"buycrp":None,"sellcpr":None,"45buy":None,"45sell":None,
-                #                 "buyday":None,'sellday':None,"buygap":None,"sellgap":None
-                # "InitialTrade":None,"BUY":False,"SHORT":False
+
                 if params["TradingEnabled"] == True and start_time <=current_time <= end_time:
                     ltp = float(FivePaisaIntegration.get_ltp(int(params['ScripCode'])))
-                    print(f"Symbol: {symbol}, ltp: {ltp}, buy200:{params['buy200']},buy20:{params['buy20']}, "
+                    print(f"Symbol: {symbol},high_value:{params['high_value'] },low_value:{params['low_value'] } ,ltp: {ltp}, buy200:{params['buy200']},buy20:{params['buy20']}, "
                           f"buycrp:{params['buycrp']},45buy:{params['45buy']},buygap:{params['buygap']},buyday:{params['buyday']}"
-                          f"BUY:{params['BUY']},count:{params['count']},candle_type:{params['candle_type']},high_value:{params['high_value']},")
+                          f"BUY:{params['BUY']},count:{params['count']},candle_type:{params['candle_type']},high_value:{params['high_value']},"
+                          f"Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ,"
+                          f"partialprofitmultiplier: {params['PartProfitMultipler']},NextTslLevel: {params['NextTslLevel']}Target = {params['TargetValue']},ATR:{params['ATR']}")
+
                     if (
                             params["buy200"]== True and
                             params["buy20"]== True and
@@ -449,28 +448,36 @@ def main_strategy():
                         params["EntryPrice"] = ltp
                         params["count"] = params["count"] + 1
                         params["InitialTrade"]="BUY"
-                        if params["USE_TSL"] ==True:
+
+                        if params["USE_TSL"] == True:
                             params["NextTslLevel"] = params["high_value"]+params["ATR"]
 
                         if params['candle_type'] == 'WORKER':
                             stoploss = params["low_value"]
                             params["StoplossValue"] = stoploss
-                            diff = params["high_value"] - stoploss
+                            diff = params["high_value"] - params["low_value"]
                             params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_WORKER"])
+                            params["TargetValue"] = params["high_value"]+params["TargetValue"]
                             if params["USE_PARTIAL_PROFIT"]==True:
+                                diff = params["high_value"] - params["low_value"]
                                 params['partialprofitval']= float(diff * params["PartProfitMultipler"])
                                 params['partialprofitval'] = params["high_value"]+params["PartProfitMultipler"]
+
+
                         if params['candle_type']=='MANAGER':
                             stoploss = params["low_value"]
                             params["StoplossValue"] = stoploss
-                            diff = params["high_value"] - stoploss
+                            diff = params["high_value"] - params["low_value"]
                             params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_MANAGER"])
+                            params["TargetValue"] = params["high_value"] + params["TargetValue"]
                             if params["USE_PARTIAL_PROFIT"]==True:
+                                diff = params["high_value"] - params["low_value"]
                                 params['partialprofitval']= float(diff * params["PartProfitMultipler"])
                                 params['partialprofitval'] = params["high_value"]+params["PartProfitMultipler"]
+
                         orderlog = (
                             f"{timestamp} Buy order executed @ {symbol} @ {ltp} @ quantity: {params['Quantity']}, @ candle_type: {params['candle_type']},length={diff}, Target = {params['TargetValue']}"
-                            f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ")
+                            f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']},partialprofitmultiplier: {params['PartProfitMultipler']},NextTslLevel: {params['NextTslLevel']} ")
                         print(orderlog)
                         write_to_order_logs(orderlog)
 
@@ -478,9 +485,11 @@ def main_strategy():
 
                         # if params['candle_type'] == 'BOSS':
                         #     stoploss = params["low_value"]
-                    print(f"Symbol: {symbol}, ltp: {ltp}, sell200:{params['sell200']},sell20:{params['sell20']}"
+                    print(f"Symbol: {symbol},high_value:{params['high_value'] },low_value:{params['low_value'] } , ltp: {ltp}, sell200:{params['sell200']},sell20:{params['sell20']}"
                           f"sellcpr:{params['sellcpr']},45sell:{params['45sell']},sellday:{params['sellday']},sellgap:{params['sellgap']}"
-                          f"SHORT:{params['SHORT']},count:{params['count']},candle_type:{params['candle_type']},low_value:{params['low_value']},")
+                          f"SHORT:{params['SHORT']},count:{params['count']},candle_type:{params['candle_type']},low_value:{params['low_value']},"
+                          f"Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ,"
+                          f"partialprofitmultiplier: {params['PartProfitMultipler']},NextTslLevel: {params['NextTslLevel']}Target = {params['TargetValue']},ATR:{params['ATR']}")
 
                     if (
                         params["sell200"] == True and
@@ -500,37 +509,39 @@ def main_strategy():
                         params["count"] = params["count"] + 1
                         params["InitialTrade"] = "SHORT"
                         if params["USE_TSL"] ==True:
-                            params["NextTslLevel"] = params["high_value"]+params["ATR"]
+                            params["NextTslLevel"] = params["low_value"]-params["ATR"]
 
                         if params['candle_type'] == 'WORKER':
                             stoploss = params["high_value"]
                             params["StoplossValue"] = stoploss
-                            diff = stoploss - params["low_value"]
+                            diff = params["high_value"] - params["low_value"]
                             params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_WORKER"])
                             params["TargetValue"] = params["low_value"]-params["TargetValue"]
                             if params["USE_PARTIAL_PROFIT"]==True:
+                                diff = params["high_value"] - params["low_value"]
                                 params['partialprofitval']= float(diff * params["PartProfitMultipler"])
                                 params['partialprofitval'] = params["low_value"]-params["PartProfitMultipler"]
 
                         if params['candle_type']=='MANAGER':
                             stoploss = params["high_value"]
                             params["StoplossValue"] = stoploss
-                            diff = stoploss - params["low_value"]
+                            diff = params["high_value"] - params["low_value"]
                             params["TargetValue"] = float(diff * params["REWARD_MULTIPLIER_MANAGER"])
                             params["TargetValue"] = params["low_value"] - params["TargetValue"]
                             if params["USE_PARTIAL_PROFIT"]==True:
+                                diff = params["high_value"] - params["low_value"]
                                 params['partialprofitval']= float(diff * params["PartProfitMultipler"])
                                 params['partialprofitval'] = params["low_value"]-params["PartProfitMultipler"]
 
                         orderlog = (f"{timestamp} Sell order executed @ {symbol} @ {ltp} @ quantity: {params['Quantity']}, @ candle_type: {params['candle_type']},length={diff}, Target = {params['TargetValue']}"
-                                    f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ")
+                                    f",Stoploss = {params['StoplossValue']}, partial profit = {params['partialprofitval']} ,partialprofitmultiplier: {params['PartProfitMultipler']},NextTslLevel: {params['NextTslLevel']}")
                         print(orderlog)
                         write_to_order_logs(orderlog)
 
                     if params["BUY"] == True:
                         if params["USE_TSL"] ==True:
                             # params["NextTslLevel"] = params["high_value"]+params["ATR"]
-                            if ltp >= params["NextTslLevel"] and params["NextTslLevel"]>0:
+                            if params["NextTslLevel"] is not None and ltp >= params["NextTslLevel"] and params["NextTslLevel"]>0 :
                                 params["NextTslLevel"]=params["NextTslLevel"]+params["ATR"]
                                 params["StoplossValue"]=params["StoplossValue"]+params["ATR"]
                                 orderlog = (f"{timestamp} TSL executed for  buy trade @ {symbol} ,ltp ={ltp} , next tsl level ={params['NextTslLevel'] }, updated sl{params['StoplossValue']}")
@@ -580,7 +591,7 @@ def main_strategy():
                             write_to_order_logs(orderlog)
 
                     if params["SHORT"] == True:
-                        if ltp <= params["NextTslLevel"] and params["NextTslLevel"] > 0 and params["USE_TSL"] ==True:
+                        if params["NextTslLevel"] is not None and ltp <= params["NextTslLevel"] and params["NextTslLevel"] > 0 and params["USE_TSL"] ==True:
                             params["NextTslLevel"] = params["NextTslLevel"] - params["ATR"]
                             params["StoplossValue"] = params["StoplossValue"] - params["ATR"]
                             orderlog = (

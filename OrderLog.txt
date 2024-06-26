@@ -320,3 +320,123 @@
 11/06/2024 14:30:48 Worker found in GRASIM , candlesize = 3.849999999999909,worker candle set value: 17.39
 11/06/2024 14:30:48 Manager Candle Usage is disabled GRASIM 
 11/06/2024 14:30:48 BOSS Candle Usage is disabled GRASIM 
+20/06/2024 14:08:24 Previous day high and low condition is disabled it will not be checked ACC
+20/06/2024 14:08:24 Candle low is outside pdh trade condition not active ACC,9:15 low=2616.9, previous day high=2598.3
+20/06/2024 14:08:24Candle high is inside pdl trade condition activeACC,9:15 high=2622.35, previous day low=2515.0
+20/06/2024 14:08:24 High 2622.35 is greater than top cpr 2535.55, ACC , buy condition satisfied
+20/06/2024 14:08:24 low 2616.9 is greater than bottom cpr 2556.65, ACC, sell condition not satisfied
+20/06/2024 14:08:24 Candle High 2622.35 is greater than high of previous day 45 min 2530, ACC buy condition satisfied
+20/06/2024 14:08:24 Candle low price 2616.9 is above low of previous day 45 min 2520.5 ACC, sell condition not satisfied
+20/06/2024 14:08:24 200 ma  2630.6015770790386 is above candle high= 2622.35 for ACC, buy condition not satisfied
+20/06/2024 14:08:24 Candle low  2616.9 is below 200 ma 2630.6015770790386 ,ACC, sell condition satisfied
+20/06/2024 14:08:24 20 ma =2620.279782314735 is below candle high= 2622.35  for ACC, buy condition satisfied
+20/06/2024 14:08:24 low price = 2616.9 is below 20 ma=2620.279782314735 ACC, sell condition satisfied
+20/06/2024 14:08:24 Worker found in ACC , candlesize = 5.449999999999818,worker candle set value: 25.21714286
+20/06/2024 14:08:26 Previous day high and low condition is disabled it will not be checked APLAPOLLO
+20/06/2024 14:08:26 Candle low is inside pdh trade condition satisfied APLAPOLLO,9:15 low=1581.0, previous day high=1622.0
+20/06/2024 14:08:26Candle high is inside pdl trade condition activeAPLAPOLLO,9:15 high=1584.0, previous day low=1582.15
+20/06/2024 14:08:26 High 1584.0  is less than top cpr 1600.691667, APLAPOLLO, buy condition not satisfied
+20/06/2024 14:08:26 low 1581.0 is less than bottom cpr 1602.075 ,APLAPOLLO, sell condition satisfied
+20/06/2024 14:08:26 Candle High 1584.0 is less than high of previous day 45 min 1608 , APLAPOLLO buy condition not satisfied
+20/06/2024 14:08:26 Candle low price 1581.0 is below low of previous day 45 min 1594.1 APLAPOLLO, sell condition satisfied
+20/06/2024 14:08:26 200 ma  1569.8497099209078 is below candle high 1584.0 for  APLAPOLLO, buy condition satisfied
+20/06/2024 14:08:26 Candle low  1581.0 is above 200 ma 1569.8497099209078, APLAPOLLO, sell condition not satisfied
+20/06/2024 14:08:26 20 ma =1578.062796293124 is below candle high= 1584.0  for APLAPOLLO, buy condition satisfied
+20/06/2024 14:08:26 low price = 1581.0 is above 20 ma=1578.062796293124, APLAPOLLO,sell condition not satisfied
+20/06/2024 14:08:26 Worker found in APLAPOLLO , candlesize = 3.0,worker candle set value: 19.59
+20/06/2024 14:08:27 Previous day high and low condition is disabled it will not be checked ADANIENSOL
+20/06/2024 14:08:27 Candle low is inside pdh trade condition satisfied ADANIENSOL,9:15 low=1016.0, previous day high=1088.6
+20/06/2024 14:08:27 Candle high is outside pdl trade condition  not active ADANIENSOL,9:15 high=1018.0, previous day low=1066.0
+20/06/2024 14:08:27 High 1018.0  is less than top cpr 1073.566667, ADANIENSOL, buy condition not satisfied
+20/06/2024 14:08:27 low 1016.0 is less than bottom cpr 1077.3 ,ADANIENSOL, sell condition satisfied
+20/06/2024 14:08:27 Candle High 1018.0 is less than high of previous day 45 min 1074 , ADANIENSOL buy condition not satisfied
+20/06/2024 14:08:27 Candle low price 1016.0 is below low of previous day 45 min 1067.25 ADANIENSOL, sell condition satisfied
+20/06/2024 14:08:27 200 ma  1016.5909386256129 is below candle high 1018.0 for  ADANIENSOL, buy condition satisfied
+20/06/2024 14:08:27 Candle low  1016.0 is below 200 ma 1016.5909386256129 ,ADANIENSOL, sell condition satisfied
+20/06/2024 14:08:27 20 ma=1018.5826814831858 is above candle high 1018.0 for ADANIENSOL, buy condition not satisfied
+20/06/2024 14:08:27 low price = 1016.0 is below 20 ma=1018.5826814831858 ADANIENSOL, sell condition satisfied
+20/06/2024 14:08:27 Worker found in ADANIENSOL , candlesize = 2.0,worker candle set value: 19.50571429
+20/06/2024 14:08:28 Previous day high and low condition is disabled it will not be checked ADANIPORTS
+20/06/2024 14:08:28 Candle low is outside pdh trade condition not active ADANIPORTS,9:15 low=1467.4, previous day high=1364.9
+20/06/2024 14:08:28Candle high is inside pdl trade condition activeADANIPORTS,9:15 high=1476.8, previous day low=1346.1
+20/06/2024 14:08:28 High 1476.8 is greater than top cpr 1354.5, ADANIPORTS , buy condition satisfied
+20/06/2024 14:08:28 low 1467.4 is greater than bottom cpr 1355.5, ADANIPORTS, sell condition not satisfied
+20/06/2024 14:08:28 Candle High 1476.8 is greater than high of previous day 45 min 1358, ADANIPORTS buy condition satisfied
+20/06/2024 14:08:28 Candle low price 1467.4 is above low of previous day 45 min 1351.5 ADANIPORTS, sell condition not satisfied
+20/06/2024 14:08:28 200 ma  1445.8564663970637 is below candle high 1476.8 for  ADANIPORTS, buy condition satisfied
+20/06/2024 14:08:28 Candle low  1467.4 is above 200 ma 1445.8564663970637, ADANIPORTS, sell condition not satisfied
+20/06/2024 14:08:28 20 ma =1464.2322026403106 is below candle high= 1476.8  for ADANIPORTS, buy condition satisfied
+20/06/2024 14:08:28 low price = 1467.4 is above 20 ma=1464.2322026403106, ADANIPORTS,sell condition not satisfied
+20/06/2024 14:08:28 Worker found in ADANIPORTS , candlesize = 9.399999999999864,worker candle set value: 12.39285714
+20/06/2024 14:08:28 Previous day high and low condition is disabled it will not be checked ATGL
+20/06/2024 14:08:28 Candle low is inside pdh trade condition satisfied ATGL,9:15 low=929.0, previous day high=976.0
+20/06/2024 14:08:28 Candle high is outside pdl trade condition  not active ATGL,9:15 high=929.85, previous day low=960.1
+20/06/2024 14:08:28 High 929.85  is less than top cpr 964.6833333, ATGL, buy condition not satisfied
+20/06/2024 14:08:28 low 929.0 is less than bottom cpr 968.05 ,ATGL, sell condition satisfied
+20/06/2024 14:08:28 Candle High 929.85 is less than high of previous day 45 min 964 , ATGL buy condition not satisfied
+20/06/2024 14:08:28 Candle low price 929.0 is below low of previous day 45 min 961.0 ATGL, sell condition satisfied
+20/06/2024 14:08:28 200 ma  934.6577424735748 is above candle high= 929.85 for ATGL, buy condition not satisfied
+20/06/2024 14:08:28 Candle low  929.0 is below 200 ma 934.6577424735748 ,ATGL, sell condition satisfied
+20/06/2024 14:08:28 20 ma=930.0780208394334 is above candle high 929.85 for ATGL, buy condition not satisfied
+20/06/2024 14:08:28 low price = 929.0 is below 20 ma=930.0780208394334 ATGL, sell condition satisfied
+20/06/2024 14:08:28 Worker found in ATGL , candlesize = 0.8500000000000227,worker candle set value: 17.70857143
+20/06/2024 14:08:28 Previous day high and low condition is disabled it will not be checked AWL
+20/06/2024 14:08:28 Candle low is inside pdh trade condition satisfied AWL,9:15 low=339.55, previous day high=358.5
+20/06/2024 14:08:28 Candle high is outside pdl trade condition  not active AWL,9:15 high=340.05, previous day low=351.55
+20/06/2024 14:08:28 High 340.05  is less than top cpr 353.5083333, AWL, buy condition not satisfied
+20/06/2024 14:08:28 low 339.55 is less than bottom cpr 355.025 ,AWL, sell condition satisfied
+20/06/2024 14:08:28 Candle High 340.05 is less than high of previous day 45 min 353 , AWL buy condition not satisfied
+20/06/2024 14:08:28 Candle low price 339.55 is below low of previous day 45 min 351.55 AWL, sell condition satisfied
+20/06/2024 14:08:28 200 ma  340.88231538530937 is above candle high= 340.05 for AWL, buy condition not satisfied
+20/06/2024 14:08:28 Candle low  339.55 is below 200 ma 340.88231538530937 ,AWL, sell condition satisfied
+20/06/2024 14:08:28 20 ma=340.41024822875363 is above candle high 340.05 for AWL, buy condition not satisfied
+20/06/2024 14:08:28 low price = 339.55 is below 20 ma=340.41024822875363 AWL, sell condition satisfied
+20/06/2024 14:08:28 Worker found in AWL , candlesize = 0.5,worker candle set value: 4.928571429
+20/06/2024 14:08:29 Previous day high and low condition is disabled it will not be checked ABCAPITAL
+20/06/2024 14:08:29 Candle low is outside pdh trade condition not active ABCAPITAL,9:15 low=243.09, previous day high=206.4
+20/06/2024 14:08:29Candle high is inside pdl trade condition activeABCAPITAL,9:15 high=243.85, previous day low=201.75
+20/06/2024 14:08:29 High 243.85 is greater than top cpr 203.625, ABCAPITAL , buy condition satisfied
+20/06/2024 14:08:29 low 243.09 is greater than bottom cpr 204.075, ABCAPITAL, sell condition not satisfied
+20/06/2024 14:08:29 Candle High 243.85 is greater than high of previous day 45 min 203, ABCAPITAL buy condition satisfied
+20/06/2024 14:08:29 Candle low price 243.09 is above low of previous day 45 min 202.3 ABCAPITAL, sell condition not satisfied
+20/06/2024 14:08:29 200 ma  240.7783877852753 is below candle high 243.85 for  ABCAPITAL, buy condition satisfied
+20/06/2024 14:08:29 Candle low  243.09 is above 200 ma 240.7783877852753, ABCAPITAL, sell condition not satisfied
+20/06/2024 14:08:29 20 ma=244.0923790910333 is above candle high 243.85 for ABCAPITAL, buy condition not satisfied
+20/06/2024 14:08:29 low price = 243.09 is below 20 ma=244.0923790910333 ABCAPITAL, sell condition satisfied
+20/06/2024 14:08:29 Worker found in ABCAPITAL , candlesize = 0.7599999999999909,worker candle set value: 2.0
+20/06/2024 14:08:29 Previous day high and low condition is disabled it will not be checked ABFRL
+20/06/2024 14:08:29 Candle low is outside pdh trade condition not active ABFRL,9:15 low=319.05, previous day high=240.5
+20/06/2024 14:08:29Candle high is inside pdl trade condition activeABFRL,9:15 high=319.45, previous day low=235.0
+20/06/2024 14:08:29 High 319.45 is greater than top cpr 237.35, ABFRL , buy condition satisfied
+20/06/2024 14:08:29 low 319.05 is greater than bottom cpr 237.75, ABFRL, sell condition not satisfied
+20/06/2024 14:08:29 Candle High 319.45 is greater than high of previous day 45 min 237, ABFRL buy condition satisfied
+20/06/2024 14:08:29 Candle low price 319.05 is above low of previous day 45 min 236.55 ABFRL, sell condition not satisfied
+20/06/2024 14:08:29 200 ma  323.2873691220985 is above candle high= 319.45 for ABFRL, buy condition not satisfied
+20/06/2024 14:08:29 Candle low  319.05 is below 200 ma 323.2873691220985 ,ABFRL, sell condition satisfied
+20/06/2024 14:08:29 20 ma=319.4721190868418 is above candle high 319.45 for ABFRL, buy condition not satisfied
+20/06/2024 14:08:29 low price = 319.05 is below 20 ma=319.4721190868418 ABFRL, sell condition satisfied
+20/06/2024 14:08:29 Worker found in ABFRL , candlesize = 0.39999999999997726,worker candle set value: 2.352857143
+20/06/2024 14:08:29 Previous day high and low condition is disabled it will not be checked AMBUJACEM
+20/06/2024 14:08:29 Candle low is outside pdh trade condition not active AMBUJACEM,9:15 low=657.75, previous day high=633.95
+20/06/2024 14:08:29Candle high is inside pdl trade condition activeAMBUJACEM,9:15 high=659.7, previous day low=618.55
+20/06/2024 14:08:29 High 659.7 is greater than top cpr 623.4166667, AMBUJACEM , buy condition satisfied
+20/06/2024 14:08:29 low 657.75 is greater than bottom cpr 626.25, AMBUJACEM, sell condition not satisfied
+20/06/2024 14:08:29 Candle High 659.7 is greater than high of previous day 45 min 627, AMBUJACEM buy condition satisfied
+20/06/2024 14:08:29 Candle low price 657.75 is above low of previous day 45 min 618.55 AMBUJACEM, sell condition not satisfied
+20/06/2024 14:08:29 200 ma  665.184484299355 is above candle high= 659.7 for AMBUJACEM, buy condition not satisfied
+20/06/2024 14:08:29 Candle low  657.75 is below 200 ma 665.184484299355 ,AMBUJACEM, sell condition satisfied
+20/06/2024 14:08:29 20 ma =659.3038216599195 is below candle high= 659.7  for AMBUJACEM, buy condition satisfied
+20/06/2024 14:08:29 low price = 657.75 is below 20 ma=659.3038216599195 AMBUJACEM, sell condition satisfied
+20/06/2024 14:08:29 Worker found in AMBUJACEM , candlesize = 1.9500000000000455,worker candle set value: 4.875714286
+20/06/2024 14:08:30 Previous day high and low condition is disabled it will not be checked DMART
+20/06/2024 14:08:30 Candle low is outside pdh trade condition not active DMART,9:15 low=4860.5, previous day high=4747.8
+20/06/2024 14:08:30Candle high is inside pdl trade condition activeDMART,9:15 high=4869.45, previous day low=4622.0
+20/06/2024 14:08:30 High 4869.45 is greater than top cpr 4706.6, DMART , buy condition satisfied
+20/06/2024 14:08:30 low 4860.5 is greater than bottom cpr 4684.9, DMART, sell condition not satisfied
+20/06/2024 14:08:30 Candle High 4869.45 is greater than high of previous day 45 min 4725, DMART buy condition satisfied
+20/06/2024 14:08:30 Candle low price 4860.5 is above low of previous day 45 min 4691.35 DMART, sell condition not satisfied
+20/06/2024 14:08:30 200 ma  4914.108754788952 is above candle high= 4869.45 for DMART, buy condition not satisfied
+20/06/2024 14:08:30 Candle low  4860.5 is below 200 ma 4914.108754788952 ,DMART, sell condition satisfied
+20/06/2024 14:08:30 20 ma=4873.850809482539 is above candle high 4869.45 for DMART, buy condition not satisfied
+20/06/2024 14:08:30 low price = 4860.5 is below 20 ma=4873.850809482539 DMART, sell condition satisfied
+20/06/2024 14:08:30 Worker found in DMART , candlesize = 8.949999999999818,worker candle set value: 48.69714286
